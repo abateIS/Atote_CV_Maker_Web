@@ -187,40 +187,32 @@ export default function Landing() {
                     </motion.div>
 
                     {/* Template cards strip */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        style={{
-                            display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap',
-                            marginTop: 72,
-                        }}
-                    >
+                    <div style={{
+                        overflowX: 'auto',
+                        width: '100vw',
+                        marginLeft: '-16px',
+                        padding: '0 16px 20px',
+                        display: 'flex',
+                        gap: 16,
+                        justifyContent: window.innerWidth < 768 ? 'flex-start' : 'center',
+                        marginTop: 48,
+                        WebkitOverflowScrolling: 'touch',
+                        scrollbarWidth: 'none',
+                    }}>
                         {TEMPLATES_PREVIEW.map((t, i) => (
                             <motion.div
                                 key={t.id}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.6 + i * 0.08 }}
-                                whileHover={{ y: -8, scale: 1.04 }}
-                                style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}
+                                transition={{ delay: 0.4 + i * 0.05 }}
+                                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0 }}
                                 onClick={() => navigate('/templates')}
                             >
                                 <MiniCV template={t} />
-                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>{t.name}</div>
-                                {t.tag && (
-                                    <span style={{
-                                        fontSize: 10, fontWeight: 700,
-                                        background: `${t.color}22`,
-                                        border: `1px solid ${t.color}44`,
-                                        color: t.color,
-                                        padding: '2px 8px', borderRadius: 'var(--radius-full)',
-                                        letterSpacing: '0.5px',
-                                    }}>{t.tag}</span>
-                                )}
+                                <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 600 }}>{t.name}</div>
                             </motion.div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 

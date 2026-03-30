@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Eye, Edit3, ChevronLeft, Sparkles, Palette, User, Briefcase, GraduationCap, Award, Globe, Code, FileText, LayoutTemplate, X, Loader, Sun, Moon } from 'lucide-react';
@@ -15,13 +15,13 @@ import ProjectsForm from '../components/editor/ProjectsForm';
 import { ModernTemplate, ClassicTemplate, CreativeTemplate, ExecutiveTemplate, TechTemplate } from '../templates/Templates';
 
 const SECTIONS = [
-    { id: 'personal', label: 'Personal Info', icon: <User size={15} /> },
+    { id: 'personal', label: 'Personal', icon: <User size={15} /> },
     { id: 'summary', label: 'Summary', icon: <FileText size={15} /> },
-    { id: 'experience', label: 'Experience', icon: <Briefcase size={15} /> },
+    { id: 'experience', label: 'Work', icon: <Briefcase size={15} /> },
     { id: 'education', label: 'Education', icon: <GraduationCap size={15} /> },
     { id: 'skills', label: 'Skills', icon: <Code size={15} /> },
-    { id: 'languages', label: 'Languages', icon: <Globe size={15} /> },
-    { id: 'certifications', label: 'Certifications', icon: <Award size={15} /> },
+    { id: 'languages', label: 'Langs', icon: <Globe size={15} /> },
+    { id: 'certifications', label: 'Awards', icon: <Award size={15} /> },
     { id: 'projects', label: 'Projects', icon: <LayoutTemplate size={15} /> },
 ];
 
@@ -60,9 +60,7 @@ export default function Editor() {
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
             const name = `${cvData.personalInfo.firstName || 'CV'}_${cvData.personalInfo.lastName || ''}_CV.pdf`.replace(/\s+/g, '_');
             pdf.save(name);
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
         setIsExporting(false);
     };
 
@@ -88,81 +86,36 @@ export default function Editor() {
                 {/* Top toolbar */}
                 <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '12px 24px',
+                    padding: '12px 16px',
                     background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-subtle)',
                     gap: 12, flexWrap: 'wrap',
+                    position: 'sticky', top: 64, zIndex: 100,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <button onClick={() => navigate('/templates')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: '1px solid var(--border-default)', color: 'var(--text-secondary)', padding: '7px 14px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font-sans)' }}>
-                            <ChevronLeft size={14} /> Templates
+                        <button onClick={() => navigate('/templates')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: '1px solid var(--border-default)', color: 'var(--text-secondary)', padding: '6px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: 12 }}>
+                            <ChevronLeft size={14} /> <span className="hide-mobile">Templates</span>
                         </button>
+                        <div className="show-mobile" style={{ gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 20, padding: 2 }}>
+                            <button onClick={() => setMobileView('editor')} style={{ padding: '4px 12px', borderRadius: 18, border: 'none', fontSize: 11, fontWeight: 700, background: mobileView === 'editor' ? 'var(--color-primary)' : 'transparent', color: mobileView === 'editor' ? '#fff' : 'var(--text-secondary)' }}>Edit</button>
+                            <button onClick={() => setMobileView('preview')} style={{ padding: '4px 12px', borderRadius: 18, border: 'none', fontSize: 11, fontWeight: 700, background: mobileView === 'preview' ? 'var(--color-primary)' : 'transparent', color: mobileView === 'preview' ? '#fff' : 'var(--text-secondary)' }}>View</button>
+                        </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                        {/* Theme Toggle */}
-                        <button
-                            onClick={toggleTheme}
-                            style={{
-                                background: 'none', border: '1px solid var(--border-default)',
-                                color: 'var(--text-secondary)', padding: '6px 10px', borderRadius: 6,
-                                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600,
-                            }}
-                        >
-                            {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-                            {theme === 'dark' ? 'Light' : 'Dark'}
-                        </button>
-
-                        {/* Accent color picker */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Accent</span>
-                            <div style={{ display: 'flex', gap: 6 }}>
-                                {['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'].map(color => (
-                                    <button
-                                        key={color}
-                                        onClick={() => setAccentColor(color)}
-                                        style={{
-                                            width: 20, height: 20, borderRadius: '50%', border: accentColor === color ? '2px solid #fff' : 'none',
-                                            backgroundColor: color, cursor: 'pointer', outline: accentColor === color ? `2px solid ${color}` : 'none',
-                                        }}
-                                    />
-                                ))}
-                            </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {['#6366f1', '#10b981', '#f59e0b', '#ef4444'].map(color => (
+                                <button key={color} onClick={() => setAccentColor(color)} style={{ width: 18, height: 18, borderRadius: '50%', background: color, border: accentColor === color ? '2px solid #fff' : 'none', cursor: 'pointer' }} />
+                            ))}
                         </div>
-
-                        {/* Tech BG picker */}
-                        {selectedTemplate === 'tech' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 15, borderLeft: '1px solid var(--border-subtle)' }}>
-                                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Tech BG</span>
-                                <div style={{ display: 'flex', gap: 6 }}>
-                                    {['#0d1117', '#000000', '#1a1b26', '#2d3436', '#1e1e1e'].map(color => (
-                                        <button
-                                            key={color}
-                                            onClick={() => setTechBgColor(color)}
-                                            style={{
-                                                width: 20, height: 20, borderRadius: 4, border: techBgColor === color ? '2px solid var(--color-primary)' : '1px solid var(--border-subtle)',
-                                                backgroundColor: color, cursor: 'pointer',
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <button onClick={loadSampleData} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)', color: 'var(--color-primary-light)', padding: '7px 14px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
-                            <Sparkles size={13} /> Sample Data
-                        </button>
-
                         <button onClick={handleExportPDF} disabled={isExporting} style={{
                             display: 'flex', alignItems: 'center', gap: 6,
-                            background: 'linear-gradient(135deg, var(--color-success), #059669)',
-                            color: '#fff', border: 'none', padding: '8px 18px',
+                            background: 'var(--color-success)', color: '#fff', border: 'none', padding: '7px 14px',
                             borderRadius: 'var(--radius-sm)', cursor: isExporting ? 'not-allowed' : 'pointer',
-                            fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-sans)',
-                            boxShadow: '0 4px 12px rgba(16,185,129,0.35)',
-                            opacity: isExporting ? 0.7 : 1,
+                            fontSize: 12, fontWeight: 700,
                         }}>
-                            {isExporting ? <Loader size={13} className="spin" /> : <Download size={13} />}
-                            {isExporting ? 'Exporting...' : 'Download PDF'}
+                            {isExporting ? <Loader size={12} className="spin" /> : <Download size={12} />}
+                            <span className="hide-mobile">{isExporting ? 'Exporting...' : 'Download PDF'}</span>
+                            <span className="show-mobile">PDF</span>
                         </button>
                     </div>
                 </div>
@@ -171,38 +124,34 @@ export default function Editor() {
                 <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                     {/* Left: Section nav + form */}
                     <div style={{
-                        width: 380, flexShrink: 0, display: 'flex', flexDirection: 'column',
-                        borderRight: '1px solid var(--border-subtle)',
+                        width: window.innerWidth < 768 ? '100%' : 360,
+                        flexShrink: 0, display: mobileView === 'editor' ? 'flex' : 'none',
+                        flexDirection: 'column', borderRight: '1px solid var(--border-subtle)',
                         background: 'var(--bg-surface)',
                     }}>
-                        {/* Section tabs */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, padding: '16px', borderBottom: '1px solid var(--border-subtle)' }}>
+                        {/* Section tabs - Scrollable on mobile */}
+                        <div style={{
+                            display: 'flex', overflowX: 'auto', gap: 8, padding: '12px',
+                            borderBottom: '1px solid var(--border-subtle)',
+                            scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch'
+                        }}>
                             {SECTIONS.map(s => (
                                 <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
-                                    display: 'flex', alignItems: 'center', gap: 8,
-                                    padding: '8px 12px', borderRadius: 8, cursor: 'pointer', border: '1px solid transparent',
+                                    display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
+                                    padding: '6px 12px', borderRadius: 20, cursor: 'pointer', border: '1px solid transparent',
                                     background: activeSection === s.id ? 'var(--color-primary-glow)' : 'transparent',
-                                    borderColor: activeSection === s.id ? 'var(--border-accent)' : 'transparent',
                                     color: activeSection === s.id ? 'var(--color-primary-light)' : 'var(--text-secondary)',
-                                    fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-sans)',
-                                    textAlign: 'left', transition: 'all 0.2s',
+                                    fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap'
                                 }}>
-                                    <span style={{ opacity: activeSection === s.id ? 1 : 0.6 }}>{s.icon}</span>
-                                    {s.label}
+                                    {s.icon} {s.label}
                                 </button>
                             ))}
                         </div>
 
                         {/* Form area */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px' }}>
                             <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={activeSection}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: 10 }}
-                                    transition={{ duration: 0.2 }}
-                                >
+                                <motion.div key={activeSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                                     {renderForm()}
                                 </motion.div>
                             </AnimatePresence>
@@ -211,15 +160,18 @@ export default function Editor() {
 
                     {/* Right: Preview */}
                     <div style={{
-                        flex: 1, overflowY: 'auto',
-                        background: 'var(--bg-base)',
-                        padding: 40,
-                        display: 'flex', justifyContent: 'center',
-                        backgroundImage: 'radial-gradient(var(--border-subtle) 1px, transparent 1px)',
-                        backgroundSize: '24px 24px',
+                        flex: 1, overflowY: 'auto', background: 'var(--bg-base)', padding: window.innerWidth < 768 ? 16 : 40,
+                        display: mobileView === 'preview' || window.innerWidth >= 768 ? 'flex' : 'none',
+                        justifyContent: 'center',
                     }}>
-                        <div style={{ width: '100%', maxWidth: 794, height: 'fit-content', boxShadow: '0 30px 60px rgba(0,0,0,0.25)', borderRadius: 4, overflow: 'hidden' }}>
-                            <TemplatePreview cvData={cvData} template={selectedTemplate} accentColor={accentColor} techBgColor={techBgColor} />
+                        <div style={{
+                            width: '100%', maxWidth: 794, height: 'fit-content',
+                            boxShadow: '0 10px 40px rgba(0,0,0,0.2)', transformOrigin: 'top center',
+                            transform: window.innerWidth < 768 ? `scale(${(window.innerWidth - 32) / 794})` : 'none'
+                        }}>
+                            <div id="cv-preview">
+                                <TemplatePreview cvData={cvData} template={selectedTemplate} accentColor={accentColor} techBgColor={techBgColor} />
+                            </div>
                         </div>
                     </div>
                 </div>
