@@ -4,10 +4,11 @@ import { Mail, Phone, MapPin, Globe } from 'lucide-react';
 // Shared helpers
 export function formatDate(dateStr, current = false) {
     if (current) return 'Present';
-    if (!dateStr) return '';
+    if (!dateStr || dateStr.length < 7) return '';
     const [y, m] = dateStr.split('-');
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${months[parseInt(m) - 1] || ''} ${y}`;
+    const monthName = months[parseInt(m) - 1] || '';
+    return monthName ? `${monthName} ${y}` : y;
 }
 
 export function SkillBar({ name, level, color }) {

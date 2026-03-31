@@ -7,7 +7,7 @@ export default function ExperienceForm() {
 
     const handleAdd = () => {
         addItem('experience', {
-            company: '', role: '', location: '', startDate: '', endDate: '', current: false, description: ''
+            company: '', position: '', location: '', startDate: '', endDate: '', current: false, description: ''
         });
     };
 
@@ -36,8 +36,8 @@ export default function ExperienceForm() {
                                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>Job Title</label>
                                 <input
                                     type="text"
-                                    value={exp.role || ''}
-                                    onChange={(e) => updateItem('experience', exp.id, { role: e.target.value })}
+                                    value={exp.position || ''}
+                                    onChange={(e) => updateItem('experience', exp.id, { position: e.target.value })}
                                     placeholder="e.g. Senior Developer"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />

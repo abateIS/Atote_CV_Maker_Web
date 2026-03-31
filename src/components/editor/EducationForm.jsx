@@ -6,7 +6,7 @@ export default function EducationForm() {
     const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => {
-        addItem('education', { school: '', degree: '', location: '', startDate: '', endDate: '', description: '' });
+        addItem('education', { institution: '', degree: '', location: '', startDate: '', endDate: '', description: '' });
     };
 
     return (
@@ -34,8 +34,8 @@ export default function EducationForm() {
                                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>School / University</label>
                                 <input
                                     type="text"
-                                    value={edu.school || ''}
-                                    onChange={(e) => updateItem('education', edu.id, { school: e.target.value })}
+                                    value={edu.institution || ''}
+                                    onChange={(e) => updateItem('education', edu.id, { institution: e.target.value })}
                                     placeholder="e.g. Addis Ababa University"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
