@@ -27,12 +27,16 @@ export function SkillBar({ name, level, color }) {
 // ─────────────────────────────────────────────
 // 1. MODERN MINIMALIST
 // ─────────────────────────────────────────────
-export function ModernTemplate({ data, accentColor = '#6366f1' }) {
+export function ModernTemplate({ data, accentColor = '#6366f1', cvBgColor = '#ffffff' }) {
     const { personalInfo: p, summary, experience, education, skills, languages, certifications, projects } = data;
     const fullName = `${p.firstName} ${p.lastName}`.trim() || 'Your Name';
 
     return (
-        <div id="cv-preview" style={{ display: 'flex', fontFamily: "'Inter', sans-serif", fontSize: 10, color: '#1e293b', background: '#fff', minHeight: 842, maxWidth: 595 }}>
+        <div id="cv-preview" style={{
+            display: 'flex', fontFamily: "'Inter', sans-serif", fontSize: 10, color: '#1e293b',
+            background: cvBgColor, minHeight: 842, maxWidth: 595,
+            wordBreak: 'break-word', overflowWrap: 'break-word'
+        }}>
             {/* Sidebar */}
             <div style={{ width: 185, background: accentColor, color: '#fff', padding: '28px 16px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {/* Photo */}
@@ -182,12 +186,16 @@ export function ModernTemplate({ data, accentColor = '#6366f1' }) {
 // ─────────────────────────────────────────────
 // 2. CLASSIC PROFESSIONAL
 // ─────────────────────────────────────────────
-export function ClassicTemplate({ data, accentColor = '#0ea5e9' }) {
+export function ClassicTemplate({ data, accentColor = '#0ea5e9', cvBgColor = '#ffffff' }) {
     const { personalInfo: p, summary, experience, education, skills, languages, certifications, projects } = data;
     const fullName = `${p.firstName} ${p.lastName}`.trim() || 'Your Name';
 
     return (
-        <div id="cv-preview" style={{ fontFamily: "'Georgia', serif", fontSize: 10, color: '#1a1a2e', background: '#fff', padding: '36px 40px', minHeight: 842 }}>
+        <div id="cv-preview" style={{
+            fontFamily: "'Georgia', serif", fontSize: 10, color: '#1a1a2e',
+            background: cvBgColor, padding: '36px 40px', minHeight: 842, maxWidth: 595,
+            wordBreak: 'break-word', overflowWrap: 'break-word'
+        }}>
             {/* Header */}
             <div style={{ textAlign: 'center', borderBottom: `3px double ${accentColor}`, paddingBottom: 16, marginBottom: 18 }}>
                 <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: '1px', color: '#0f172a', marginBottom: 4, fontFamily: 'Georgia, serif' }}>{fullName}</h1>
@@ -304,13 +312,17 @@ export function ClassicTemplate({ data, accentColor = '#0ea5e9' }) {
 // ─────────────────────────────────────────────
 // 3. CREATIVE BOLD
 // ─────────────────────────────────────────────
-export function CreativeTemplate({ data, accentColor = '#f59e0b' }) {
+export function CreativeTemplate({ data, accentColor = '#f59e0b', cvBgColor = '#ffffff' }) {
     const { personalInfo: p, summary, experience, education, skills, languages, certifications, projects } = data;
     const fullName = `${p.firstName} ${p.lastName}`.trim() || 'Your Name';
     const dark = '#1a0628';
 
     return (
-        <div id="cv-preview" style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, background: '#fff', minHeight: 842 }}>
+        <div id="cv-preview" style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 10, background: cvBgColor,
+            minHeight: 842, maxWidth: 595,
+            wordBreak: 'break-word', overflowWrap: 'break-word'
+        }}>
             {/* Header */}
             <div style={{
                 background: `linear-gradient(135deg, ${dark} 0%, #2d1b4e 50%, ${dark} 100%)`,
@@ -439,13 +451,17 @@ export function CreativeTemplate({ data, accentColor = '#f59e0b' }) {
 // ─────────────────────────────────────────────
 // 4. EXECUTIVE CORPORATE
 // ─────────────────────────────────────────────
-export function ExecutiveTemplate({ data, accentColor = '#1e40af' }) {
+export function ExecutiveTemplate({ data, accentColor = '#1e40af', cvBgColor = '#ffffff' }) {
     const { personalInfo: p, summary, experience, education, skills, languages, certifications, projects } = data;
     const fullName = `${p.firstName} ${p.lastName}`.trim() || 'Your Name';
     const gold = '#c9a84c';
 
     return (
-        <div id="cv-preview" style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, background: '#fff', minHeight: 842 }}>
+        <div id="cv-preview" style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 10, background: cvBgColor,
+            minHeight: 842, maxWidth: 595,
+            wordBreak: 'break-word', overflowWrap: 'break-word'
+        }}>
             {/* Dark header */}
             <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)', padding: '32px 36px', color: '#fff' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
@@ -560,7 +576,11 @@ export function TechTemplate({ data, accentColor = '#10b981', techBgColor = '#0d
     const fullName = `${p.firstName} ${p.lastName}`.trim() || 'Your Name';
 
     return (
-        <div id="cv-preview" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9.5, background: techBgColor, color: '#e2e8f0', minHeight: 842 }}>
+        <div id="cv-preview" style={{
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 9.5, background: techBgColor,
+            color: '#e2e8f0', minHeight: 842, maxWidth: 595,
+            wordBreak: 'break-word', overflowWrap: 'break-word'
+        }}>
             {/* Terminal header */}
             <div style={{ padding: '20px 28px', borderBottom: `1px solid ${accentColor}33` }}>
                 <div style={{ fontSize: 9, color: accentColor + '80', fontFamily: 'monospace', marginBottom: 8 }}>whoami</div>

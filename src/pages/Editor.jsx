@@ -25,8 +25,15 @@ const SECTIONS = [
     { id: 'projects', label: 'Projects', icon: <LayoutTemplate size={15} /> },
 ];
 
-function TemplatePreview({ cvData, template, accentColor, techBgColor }) {
-    const props = { data: cvData, accentColor, techBgColor };
+const PRESET_BG_COLORS = [
+    '#ffffff', '#f8fafc', '#f1f5f9', '#fff7ed', '#fefce8',
+    '#f0fdf4', '#f0f9ff', '#f5f3ff', '#fff1f2', '#fafaf9'
+];
+
+const TECH_BG_OPTIONS = ['#0d1117', '#000000', '#1a1b26', '#2d3436', '#1e1e1e'];
+
+function TemplatePreview({ cvData, template, accentColor, techBgColor, cvBgColor }) {
+    const props = { data: cvData, accentColor, techBgColor, cvBgColor };
     switch (template) {
         case 'modern': return <ModernTemplate {...props} />;
         case 'classic': return <ClassicTemplate {...props} />;
@@ -39,7 +46,7 @@ function TemplatePreview({ cvData, template, accentColor, techBgColor }) {
 
 export default function Editor() {
     const navigate = useNavigate();
-    const { cvData, selectedTemplate, accentColor, setAccentColor, techBgColor, setTechBgColor, loadSampleData, theme, toggleTheme } = useCV();
+    const { cvData, selectedTemplate, accentColor, setAccentColor, techBgColor, setTechBgColor, cvBgColor, setCvBgColor, loadSampleData, theme, toggleTheme } = useCV();
     const [activeSection, setActiveSection] = useState('personal');
     const [mobileView, setMobileView] = useState('editor'); // 'editor' | 'preview'
     const [isExporting, setIsExporting] = useState(false);
@@ -52,7 +59,7 @@ export default function Editor() {
             const { default: jsPDF } = await import('jspdf');
             const element = document.getElementById('cv-preview');
             if (!element) { setIsExporting(false); return; }
-            const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+            const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor });
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const pdfW = pdf.internal.pageSize.getWidth();
@@ -101,12 +108,31 @@ export default function Editor() {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            {['#6366f1', '#10b981', '#f59e0b', '#ef4444'].map(color => (
-                                <button key={color} onClick={() => setAccentColor(color)} style={{ width: 18, height: 18, borderRadius: '50%', background: color, border: accentColor === color ? '2px solid #fff' : 'none', cursor: 'pointer' }} />
-                            ))}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                        {/* Background Control */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 15, borderLeft: '1px solid var(--border-subtle)' }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>CV Background</span>
+                            <div style={{ display: 'flex', gap: 4 }}>
+                                {(selectedTemplate === 'tech' ? TECH_BG_OPTIONS : PRESET_BG_COLORS.slice(0, 5)).map(color => (
+                                    <button
+                                        key={color}
+                                        onClick={() => selectedTemplate === 'tech' ? setTechBgColor(color) : setCvBgColor(color)}
+                                        style={{
+                                            width: 18, height: 18, borderRadius: 4, background: color,
+                                            border: (selectedTemplate === 'tech' ? techBgColor : cvBgColor) === color ? '2px solid var(--color-primary)' : '1px solid var(--border-subtle)',
+                                            cursor: 'pointer'
+                                        }}
+                                    />
+                                ))}
+                                <input
+                                    type="color"
+                                    value={selectedTemplate === 'tech' ? techBgColor : cvBgColor}
+                                    onChange={(e) => selectedTemplate === 'tech' ? setTechBgColor(e.target.value) : setCvBgColor(e.target.value)}
+                                    style={{ width: 20, height: 20, padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
+                                />
+                            </div>
                         </div>
+
                         <button onClick={handleExportPDF} disabled={isExporting} style={{
                             display: 'flex', alignItems: 'center', gap: 6,
                             background: 'var(--color-success)', color: '#fff', border: 'none', padding: '7px 14px',
@@ -124,12 +150,12 @@ export default function Editor() {
                 <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                     {/* Left: Section nav + form */}
                     <div style={{
-                        width: window.innerWidth < 768 ? '100%' : 360,
+                        width: window.innerWidth < 768 ? '100%' : 380,
                         flexShrink: 0, display: mobileView === 'editor' ? 'flex' : 'none',
                         flexDirection: 'column', borderRight: '1px solid var(--border-subtle)',
                         background: 'var(--bg-surface)',
                     }}>
-                        {/* Section tabs - Scrollable on mobile */}
+                        {/* Section tabs */}
                         <div style={{
                             display: 'flex', overflowX: 'auto', gap: 8, padding: '12px',
                             borderBottom: '1px solid var(--border-subtle)',
@@ -149,7 +175,7 @@ export default function Editor() {
                         </div>
 
                         {/* Form area */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px' }}>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
                             <AnimatePresence mode="wait">
                                 <motion.div key={activeSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                                     {renderForm()}
@@ -166,11 +192,11 @@ export default function Editor() {
                     }}>
                         <div style={{
                             width: '100%', maxWidth: 794, height: 'fit-content',
-                            boxShadow: '0 10px 40px rgba(0,0,0,0.2)', transformOrigin: 'top center',
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.25)', transformOrigin: 'top center',
                             transform: window.innerWidth < 768 ? `scale(${(window.innerWidth - 32) / 794})` : 'none'
                         }}>
                             <div id="cv-preview">
-                                <TemplatePreview cvData={cvData} template={selectedTemplate} accentColor={accentColor} techBgColor={techBgColor} />
+                                <TemplatePreview cvData={cvData} template={selectedTemplate} accentColor={accentColor} techBgColor={techBgColor} cvBgColor={cvBgColor} />
                             </div>
                         </div>
                     </div>
