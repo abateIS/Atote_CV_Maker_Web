@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
+import MonthYearPicker from './MonthYearPicker';
 
 export default function CertificationsForm() {
     const { cvData, addItem, updateItem, removeItem } = useCV();
@@ -51,17 +52,11 @@ export default function CertificationsForm() {
                                         style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                     />
                                 </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>Issue Date</label>
-                                    <input
-                                        type="month"
-                                        value={cert.date || ''}
-                                        onChange={(e) => updateItem('certifications', cert.id, { date: e.target.value })}
-                                        onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-                                        onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', width: '100%', cursor: 'pointer' }}
-                                    />
-                                </div>
+                                <MonthYearPicker
+                                    label="Issue Date"
+                                    value={cert.date || ''}
+                                    onChange={(val) => updateItem('certifications', cert.id, { date: val })}
+                                />
                             </div>
                         </div>
                     </div>

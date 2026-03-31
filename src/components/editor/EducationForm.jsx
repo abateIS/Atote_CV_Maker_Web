@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
+import MonthYearPicker from './MonthYearPicker';
 
 export default function EducationForm() {
     const { cvData, addItem, updateItem, removeItem } = useCV();
@@ -60,28 +61,16 @@ export default function EducationForm() {
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>Start Date</label>
-                                <input
-                                    type="month"
-                                    value={edu.startDate || ''}
-                                    onChange={(e) => updateItem('education', edu.id, { startDate: e.target.value })}
-                                    onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                    style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}
-                                />
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>End Date</label>
-                                <input
-                                    type="month"
-                                    value={edu.endDate || ''}
-                                    onChange={(e) => updateItem('education', edu.id, { endDate: e.target.value })}
-                                    onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                    style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}
-                                />
-                            </div>
+                            <MonthYearPicker
+                                label="Start Date"
+                                value={edu.startDate || ''}
+                                onChange={(val) => updateItem('education', edu.id, { startDate: val })}
+                            />
+                            <MonthYearPicker
+                                label="End Date"
+                                value={edu.endDate || ''}
+                                onChange={(val) => updateItem('education', edu.id, { endDate: val })}
+                            />
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 16 }}>

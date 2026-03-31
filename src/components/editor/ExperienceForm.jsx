@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
+import MonthYearPicker from './MonthYearPicker';
 
 export default function ExperienceForm() {
     const { cvData, addItem, updateItem, removeItem } = useCV();
@@ -73,29 +74,17 @@ export default function ExperienceForm() {
                                 <label htmlFor={`current-${exp.id}`} style={{ fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer' }}>I work here currently</label>
                             </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>Start Date</label>
-                                <input
-                                    type="month"
-                                    value={exp.startDate || ''}
-                                    onChange={(e) => updateItem('experience', exp.id, { startDate: e.target.value })}
-                                    onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                    style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}
-                                />
-                            </div>
+                            <MonthYearPicker
+                                label="Start Date"
+                                value={exp.startDate || ''}
+                                onChange={(val) => updateItem('experience', exp.id, { startDate: val })}
+                            />
                             {!exp.current && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>End Date</label>
-                                    <input
-                                        type="month"
-                                        value={exp.endDate || ''}
-                                        onChange={(e) => updateItem('experience', exp.id, { endDate: e.target.value })}
-                                        onFocus={(e) => e.target.showPicker && e.target.showPicker()}
-                                        onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}
-                                    />
-                                </div>
+                                <MonthYearPicker
+                                    label="End Date"
+                                    value={exp.endDate || ''}
+                                    onChange={(val) => updateItem('experience', exp.id, { endDate: val })}
+                                />
                             )}
                         </div>
 
