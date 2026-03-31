@@ -3,30 +3,10 @@ import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
 
 export default function CertificationsForm() {
-    const { cvData, setCVData } = useCV();
+    const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => {
-        setCVData({
-            ...cvData,
-            certifications: [
-                ...cvData.certifications,
-                { id: Date.now().toString(), name: '', issuer: '', date: '' }
-            ]
-        });
-    };
-
-    const handleRemove = (id) => {
-        setCVData({
-            ...cvData,
-            certifications: cvData.certifications.filter(cert => cert.id !== id)
-        });
-    };
-
-    const handleChange = (id, field, value) => {
-        setCVData({
-            ...cvData,
-            certifications: cvData.certifications.map(cert => cert.id === id ? { ...cert, [field]: value } : cert)
-        });
+        addItem('certifications', { name: '', issuer: '', date: '' });
     };
 
     return (
@@ -43,7 +23,7 @@ export default function CertificationsForm() {
                         position: 'relative'
                     }}>
                         <button
-                            onClick={() => handleRemove(cert.id)}
+                            onClick={() => removeItem('certifications', cert.id)}
                             style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
                         >
                             <Trash2 size={16} />
@@ -55,7 +35,7 @@ export default function CertificationsForm() {
                                 <input
                                     type="text"
                                     value={cert.name || ''}
-                                    onChange={(e) => handleChange(cert.id, 'name', e.target.value)}
+                                    onChange={(e) => updateItem('certifications', cert.id, { name: e.target.value })}
                                     placeholder="e.g. AWS Solutions Architect"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -66,7 +46,7 @@ export default function CertificationsForm() {
                                     <input
                                         type="text"
                                         value={cert.issuer || ''}
-                                        onChange={(e) => handleChange(cert.id, 'issuer', e.target.value)}
+                                        onChange={(e) => updateItem('certifications', cert.id, { issuer: e.target.value })}
                                         placeholder="e.g. Amazon"
                                         style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                     />
@@ -76,7 +56,7 @@ export default function CertificationsForm() {
                                     <input
                                         type="month"
                                         value={cert.date || ''}
-                                        onChange={(e) => handleChange(cert.id, 'date', e.target.value)}
+                                        onChange={(e) => updateItem('certifications', cert.id, { date: e.target.value })}
                                         style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                     />
                                 </div>

@@ -3,30 +3,10 @@ import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
 
 export default function EducationForm() {
-    const { cvData, setCVData } = useCV();
+    const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => {
-        setCVData({
-            ...cvData,
-            education: [
-                ...cvData.education,
-                { id: Date.now().toString(), school: '', degree: '', location: '', startDate: '', endDate: '', description: '' }
-            ]
-        });
-    };
-
-    const handleRemove = (id) => {
-        setCVData({
-            ...cvData,
-            education: cvData.education.filter(edu => edu.id !== id)
-        });
-    };
-
-    const handleChange = (id, field, value) => {
-        setCVData({
-            ...cvData,
-            education: cvData.education.map(edu => edu.id === id ? { ...edu, [field]: value } : edu)
-        });
+        addItem('education', { school: '', degree: '', location: '', startDate: '', endDate: '', description: '' });
     };
 
     return (
@@ -43,7 +23,7 @@ export default function EducationForm() {
                         position: 'relative'
                     }}>
                         <button
-                            onClick={() => handleRemove(edu.id)}
+                            onClick={() => removeItem('education', edu.id)}
                             style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
                         >
                             <Trash2 size={16} />
@@ -55,7 +35,7 @@ export default function EducationForm() {
                                 <input
                                     type="text"
                                     value={edu.school || ''}
-                                    onChange={(e) => handleChange(edu.id, 'school', e.target.value)}
+                                    onChange={(e) => updateItem('education', edu.id, { school: e.target.value })}
                                     placeholder="e.g. Addis Ababa University"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -65,7 +45,7 @@ export default function EducationForm() {
                                 <input
                                     type="text"
                                     value={edu.degree || ''}
-                                    onChange={(e) => handleChange(edu.id, 'degree', e.target.value)}
+                                    onChange={(e) => updateItem('education', edu.id, { degree: e.target.value })}
                                     placeholder="e.g. B.Sc. in Computer Science"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -75,7 +55,7 @@ export default function EducationForm() {
                                 <input
                                     type="text"
                                     value={edu.location || ''}
-                                    onChange={(e) => handleChange(edu.id, 'location', e.target.value)}
+                                    onChange={(e) => updateItem('education', edu.id, { location: e.target.value })}
                                     placeholder="Addis Ababa"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -85,7 +65,7 @@ export default function EducationForm() {
                                 <input
                                     type="month"
                                     value={edu.startDate || ''}
-                                    onChange={(e) => handleChange(edu.id, 'startDate', e.target.value)}
+                                    onChange={(e) => updateItem('education', edu.id, { startDate: e.target.value })}
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
                             </div>
@@ -94,7 +74,7 @@ export default function EducationForm() {
                                 <input
                                     type="month"
                                     value={edu.endDate || ''}
-                                    onChange={(e) => handleChange(edu.id, 'endDate', e.target.value)}
+                                    onChange={(e) => updateItem('education', edu.id, { endDate: e.target.value })}
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
                             </div>
@@ -104,7 +84,7 @@ export default function EducationForm() {
                             <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>Additional Info (Optional)</label>
                             <textarea
                                 value={edu.description || ''}
-                                onChange={(e) => handleChange(edu.id, 'description', e.target.value)}
+                                onChange={(e) => updateItem('education', edu.id, { description: e.target.value })}
                                 placeholder="GPA, Honors, relevant courses..."
                                 style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', minHeight: 80, resize: 'vertical' }}
                             />

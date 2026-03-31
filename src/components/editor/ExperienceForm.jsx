@@ -1,31 +1,13 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
-import { Plus, Trash2, Calendar } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function ExperienceForm() {
-    const { cvData, setCVData } = useCV();
+    const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => {
-        setCVData({
-            ...cvData,
-            experience: [
-                ...cvData.experience,
-                { id: Date.now().toString(), company: '', role: '', location: '', startDate: '', endDate: '', current: false, description: '' }
-            ]
-        });
-    };
-
-    const handleRemove = (id) => {
-        setCVData({
-            ...cvData,
-            experience: cvData.experience.filter(exp => exp.id !== id)
-        });
-    };
-
-    const handleChange = (id, field, value) => {
-        setCVData({
-            ...cvData,
-            experience: cvData.experience.map(exp => exp.id === id ? { ...exp, [field]: value } : exp)
+        addItem('experience', {
+            company: '', role: '', location: '', startDate: '', endDate: '', current: false, description: ''
         });
     };
 
@@ -43,7 +25,7 @@ export default function ExperienceForm() {
                         position: 'relative'
                     }}>
                         <button
-                            onClick={() => handleRemove(exp.id)}
+                            onClick={() => removeItem('experience', exp.id)}
                             style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
                         >
                             <Trash2 size={16} />
@@ -55,7 +37,7 @@ export default function ExperienceForm() {
                                 <input
                                     type="text"
                                     value={exp.role || ''}
-                                    onChange={(e) => handleChange(exp.id, 'role', e.target.value)}
+                                    onChange={(e) => updateItem('experience', exp.id, { role: e.target.value })}
                                     placeholder="e.g. Senior Developer"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -65,7 +47,7 @@ export default function ExperienceForm() {
                                 <input
                                     type="text"
                                     value={exp.company || ''}
-                                    onChange={(e) => handleChange(exp.id, 'company', e.target.value)}
+                                    onChange={(e) => updateItem('experience', exp.id, { company: e.target.value })}
                                     placeholder="e.g. Ethio Telecom"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -75,7 +57,7 @@ export default function ExperienceForm() {
                                 <input
                                     type="text"
                                     value={exp.location || ''}
-                                    onChange={(e) => handleChange(exp.id, 'location', e.target.value)}
+                                    onChange={(e) => updateItem('experience', exp.id, { location: e.target.value })}
                                     placeholder="Addis Ababa"
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
@@ -85,7 +67,7 @@ export default function ExperienceForm() {
                                 <input
                                     type="checkbox"
                                     checked={exp.current}
-                                    onChange={(e) => handleChange(exp.id, 'current', e.target.checked)}
+                                    onChange={(e) => updateItem('experience', exp.id, { current: e.target.checked })}
                                     id={`current-${exp.id}`}
                                 />
                                 <label htmlFor={`current-${exp.id}`} style={{ fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer' }}>I work here currently</label>
@@ -96,7 +78,7 @@ export default function ExperienceForm() {
                                 <input
                                     type="month"
                                     value={exp.startDate || ''}
-                                    onChange={(e) => handleChange(exp.id, 'startDate', e.target.value)}
+                                    onChange={(e) => updateItem('experience', exp.id, { startDate: e.target.value })}
                                     style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                 />
                             </div>
@@ -106,7 +88,7 @@ export default function ExperienceForm() {
                                     <input
                                         type="month"
                                         value={exp.endDate || ''}
-                                        onChange={(e) => handleChange(exp.id, 'endDate', e.target.value)}
+                                        onChange={(e) => updateItem('experience', exp.id, { endDate: e.target.value })}
                                         style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
                                     />
                                 </div>
@@ -117,7 +99,7 @@ export default function ExperienceForm() {
                             <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>Description</label>
                             <textarea
                                 value={exp.description || ''}
-                                onChange={(e) => handleChange(exp.id, 'description', e.target.value)}
+                                onChange={(e) => updateItem('experience', exp.id, { description: e.target.value })}
                                 placeholder="Briefly describe your responsibilities and achievements..."
                                 style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', minHeight: 100, resize: 'vertical' }}
                             />
