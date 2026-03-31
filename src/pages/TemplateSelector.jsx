@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 import Navbar from '../components/ui/Navbar';
 import { useCV } from '../context/CVContext';
+import { ModernTemplate, ClassicTemplate, CreativeTemplate, ExecutiveTemplate, TechTemplate } from '../templates/Templates';
 
 const TEMPLATES = [
     {
@@ -11,7 +12,6 @@ const TEMPLATES = [
         name: 'Modern Minimalist',
         description: 'Clean two-column layout with a bold accent sidebar. Perfect for tech & design roles.',
         tags: ['Most Popular', 'ATS Friendly'],
-        colors: ['#6366f1', '#818cf8'],
         accentColor: '#6366f1',
     },
     {
@@ -19,7 +19,6 @@ const TEMPLATES = [
         name: 'Classic Professional',
         description: 'Timeless single-column format with elegant typography. Trusted by corporate professionals.',
         tags: ['Professional', 'Traditional'],
-        colors: ['#0ea5e9', '#38bdf8'],
         accentColor: '#0ea5e9',
     },
     {
@@ -27,7 +26,6 @@ const TEMPLATES = [
         name: 'Creative Bold',
         description: 'Vibrant header with icon-driven sections. Make a powerful first impression.',
         tags: ['Creative', 'Stand Out'],
-        colors: ['#f59e0b', '#fbbf24'],
         accentColor: '#f59e0b',
     },
     {
@@ -35,7 +33,6 @@ const TEMPLATES = [
         name: 'Executive Corporate',
         description: 'Dark navy header with gold accents. The power layout for senior leaders.',
         tags: ['Executive', 'C-Suite'],
-        colors: ['#1e40af', '#3b82f6'],
         accentColor: '#1e40af',
     },
     {
@@ -43,97 +40,103 @@ const TEMPLATES = [
         name: 'Tech Developer',
         description: 'Terminal-inspired with monospace accents and skill badges. Ideal for engineers.',
         tags: ['Developer', 'Tech Roles'],
-        colors: ['#10b981', '#34d399'],
         accentColor: '#10b981',
     },
 ];
 
-function TemplateMiniPreview({ template, selected }) {
-    const [c1, c2] = template.colors;
+const SAMPLE_DATA = {
+    personalInfo: {
+        firstName: 'Abebe',
+        lastName: 'Abebe',
+        title: 'Senior Software Engineer',
+        email: 'abebe.abebe@example.et',
+        phone: '+251 911 00 11 22',
+        location: 'Addis Ababa, Ethiopia',
+        linkedin: 'linkedin.com/in/abebeabebe',
+        github: 'github.com/abebeabebe',
+        website: 'abebeabebe.et',
+        photo: null,
+    },
+    summary: 'Experienced Software Engineer based in Addis Ababa, passionate about building scalable solutions for Ethiopia’s digital economy. Specialized in React, Node.js, and cloud architecture.',
+    experience: [
+        {
+            id: '1',
+            position: 'Lead Developer',
+            company: 'Ethio Telecom',
+            location: 'Addis Ababa',
+            startDate: '2020-01',
+            endDate: '',
+            current: true,
+            description: 'Leading digital transformation projects and developing modern payment systems.'
+        }
+    ],
+    education: [
+        {
+            id: '1',
+            institution: 'Addis Ababa University',
+            degree: 'B.Sc. in Computer Science',
+            location: 'Addis Ababa',
+            startDate: '2015-09',
+            endDate: '2019-07',
+            description: 'Graduated with Distinction. Focused on Software Engineering.'
+        }
+    ],
+    skills: [
+        { id: 1, name: 'React.js', level: 95 },
+        { id: 2, name: 'Node.js', level: 90 },
+        { id: 3, name: 'Cloud Computing', level: 85 }
+    ],
+    languages: [
+        { id: '1', language: 'Amharic', proficiency: 'Native' },
+        { id: '2', language: 'English', proficiency: 'Professional' }
+    ],
+    certifications: [
+        { id: 1, name: 'AWS Certified Solutions Architect', issuer: 'Amazon', date: '2022-05' }
+    ],
+    projects: [
+        { id: 1, name: 'Atote CV Maker', description: 'A professional CV builder for Ethiopian job seekers.', technologies: 'React, Vite, Framer Motion' }
+    ]
+};
 
-    const layouts = {
-        modern: (
-            <div style={{ display: 'flex', height: '100%', gap: 0 }}>
-                <div style={{ width: '32%', background: `linear-gradient(180deg, ${c1}, ${c2})`, padding: 6, flexShrink: 0 }}>
-                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', margin: '4px auto 6px' }} />
-                    {[70, 85, 60, 75, 90, 65].map((w, i) => (
-                        <div key={i} style={{ height: 2, width: `${w}%`, background: 'rgba(255,255,255,0.4)', borderRadius: 4, marginBottom: 4 }} />
-                    ))}
-                </div>
-                <div style={{ flex: 1, padding: 6 }}>
-                    <div style={{ height: 3, background: c1, width: '70%', borderRadius: 4, marginBottom: 4 }} />
-                    <div style={{ height: 2, background: '#e2e8f0', width: '50%', borderRadius: 4, marginBottom: 8 }} />
-                    {[100, 80, 95, 70, 85, 60, 75, 65, 80].map((w, i) => (
-                        <div key={i} style={{ height: 2, width: `${w}%`, background: i % 3 === 0 ? c1 + '66' : '#e2e8f0', borderRadius: 4, marginBottom: 3 }} />
-                    ))}
-                </div>
-            </div>
-        ),
-        classic: (
-            <div style={{ padding: 8 }}>
-                <div style={{ textAlign: 'center', borderBottom: `2px solid ${c1}`, paddingBottom: 6, marginBottom: 6 }}>
-                    <div style={{ height: 4, background: c1, width: '60%', margin: '0 auto 3px', borderRadius: 4 }} />
-                    <div style={{ height: 2, background: '#e2e8f0', width: '45%', margin: '0 auto', borderRadius: 4 }} />
-                </div>
-                {[100, 75, 85, 60, 90, 70, 80, 65, 75, 85, 60].map((w, i) => (
-                    <div key={i} style={{ height: 2, width: `${w}%`, background: i % 4 === 0 ? c1 + '88' : '#e2e8f0', borderRadius: 4, marginBottom: 3 }} />
-                ))}
-            </div>
-        ),
-        creative: (
-            <div style={{ height: '100%' }}>
-                <div style={{ height: 36, background: `linear-gradient(135deg, ${c1}, ${c2})`, padding: '6px 8px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,255,255,0.3)' }} />
-                    <div>
-                        <div style={{ height: 3, width: 40, background: '#fff', borderRadius: 4, marginBottom: 3 }} />
-                        <div style={{ height: 2, width: 30, background: 'rgba(255,255,255,0.6)', borderRadius: 4 }} />
-                    </div>
-                </div>
-                <div style={{ padding: '6px 8px' }}>
-                    {[100, 80, 90, 65, 85, 70, 60, 80, 75].map((w, i) => (
-                        <div key={i} style={{ height: 2, width: `${w}%`, background: i % 3 === 0 ? c1 + '66' : '#e2e8f0', borderRadius: 4, marginBottom: 3 }} />
-                    ))}
-                </div>
-            </div>
-        ),
-        executive: (
-            <div style={{ height: '100%' }}>
-                <div style={{ height: 44, background: `linear-gradient(135deg, #0f172a, ${c1})`, padding: 8, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                    <div style={{ height: 4, width: '55%', background: '#fbbf24', borderRadius: 4, marginBottom: 4 }} />
-                    <div style={{ height: 2, width: '40%', background: 'rgba(255,255,255,0.4)', borderRadius: 4 }} />
-                </div>
-                <div style={{ padding: '6px 8px' }}>
-                    {[100, 75, 85, 65, 90, 70, 60, 80, 75, 85].map((w, i) => (
-                        <div key={i} style={{ height: 2, width: `${w}%`, background: i % 4 === 0 ? '#fbbf24' + '88' : '#e2e8f0', borderRadius: 4, marginBottom: 3 }} />
-                    ))}
-                </div>
-            </div>
-        ),
-        tech: (
-            <div style={{ height: '100%', background: '#0a0a14' }}>
-                <div style={{ padding: 6, borderBottom: `1px solid ${c1}33` }}>
-                    <div style={{ height: 3, width: '65%', background: c1, borderRadius: 4, marginBottom: 3 }} />
-                    <div style={{ height: 2, width: '45%', background: c2 + '80', borderRadius: 4 }} />
-                </div>
-                <div style={{ padding: 6 }}>
-                    {[100, 80, 70, 90, 60, 85, 75, 65, 80].map((w, i) => (
-                        <div key={i} style={{ height: 2, width: `${w}%`, background: i % 3 === 0 ? c1 + '99' : '#334155', borderRadius: 4, marginBottom: 3 }} />
-                    ))}
-                </div>
-            </div>
-        ),
+function FullTemplatePreview({ templateId, accentColor }) {
+    const props = { data: SAMPLE_DATA, accentColor, cvBgColor: '#ffffff' };
+
+    const renderTemplate = () => {
+        switch (templateId) {
+            case 'modern': return <ModernTemplate {...props} />;
+            case 'classic': return <ClassicTemplate {...props} />;
+            case 'creative': return <CreativeTemplate {...props} />;
+            case 'executive': return <ExecutiveTemplate {...props} />;
+            case 'tech': return <TechTemplate {...props} techBgColor="#0d1117" />;
+            default: return <ModernTemplate {...props} />;
+        }
     };
 
     return (
         <div style={{
-            width: '100%', height: 180,
+            width: '100%',
+            height: 320,
             background: '#fff',
-            borderRadius: 8,
+            borderRadius: 12,
             overflow: 'hidden',
-            boxShadow: selected ? `0 0 0 3px ${template.accentColor}, 0 12px 40px rgba(0,0,0,0.4)` : '0 4px 20px rgba(0,0,0,0.3)',
-            transition: 'all 0.3s ease',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+            position: 'relative',
+            border: '1px solid var(--border-subtle)'
         }}>
-            {layouts[template.id]}
+            <div style={{
+                transform: 'scale(0.4)',
+                transformOrigin: 'top center',
+                width: 794, // Standard CV width
+                margin: '0 auto'
+            }}>
+                {renderTemplate()}
+            </div>
+            {/* Gradient overlay to fade bottom */}
+            <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0, height: 60,
+                background: 'linear-gradient(to top, var(--bg-card), transparent)',
+                zIndex: 2
+            }} />
         </div>
     );
 }
@@ -142,121 +145,129 @@ export default function TemplateSelector() {
     const navigate = useNavigate();
     const { selectedTemplate, setSelectedTemplate, setAccentColor } = useCV();
 
-    const handleSelect = (template) => {
-        setSelectedTemplate(template.id);
-        setAccentColor(template.accentColor);
+    const handleSelect = (templateId, accentColor) => {
+        setSelectedTemplate(templateId);
+        setAccentColor(accentColor);
     };
 
-    const handleContinue = () => {
-        const t = TEMPLATES.find(t => t.id === selectedTemplate);
-        if (t) setAccentColor(t.accentColor);
+    const handleContinue = (templateId, accentColor) => {
+        handleSelect(templateId, accentColor);
         navigate('/editor');
     };
 
     return (
-        <div style={{ minHeight: '100vh', paddingTop: 80 }}>
+        <div style={{ minHeight: '100vh', paddingTop: 80, background: 'var(--bg-base)' }}>
             <Navbar />
 
-            <div className="container" style={{ paddingTop: 48, paddingBottom: 80 }}>
+            <div className="container" style={{ paddingTop: 48, paddingBottom: 100 }}>
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
-                    style={{ textAlign: 'center', marginBottom: 48 }}
+                    style={{ textAlign: 'center', marginBottom: 64 }}
                 >
                     <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, marginBottom: 16, letterSpacing: '-1px', color: 'var(--text-primary)' }}>
                         Choose Your <span className="gradient-text">Template</span>
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 18 }}>
-                        Pick a layout that best represents your professional journey.
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 18, maxWidth: 600, margin: '0 auto' }}>
+                        Transform your career with our professionally designed layouts, tailored for the Ethiopian market.
                     </p>
                 </motion.div>
 
                 {/* Template grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, marginBottom: 48 }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: 32,
+                    alignItems: 'start'
+                }}>
                     {TEMPLATES.map((template, i) => {
                         const isSelected = selectedTemplate === template.id;
                         return (
                             <motion.div
                                 key={template.id}
-                                initial={{ opacity: 0, y: 24 }}
+                                initial={{ opacity: 0, y: 32 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.08 }}
-                                whileHover={{ y: -6 }}
-                                onClick={() => handleSelect(template)}
+                                transition={{ delay: i * 0.1 }}
                                 style={{
-                                    cursor: 'pointer',
-                                    background: isSelected ? `linear-gradient(135deg, ${template.accentColor}15, ${template.accentColor}08)` : 'var(--bg-card)',
+                                    background: 'var(--bg-card)',
                                     border: `2px solid ${isSelected ? template.accentColor : 'var(--border-subtle)'}`,
-                                    borderRadius: 'var(--radius-lg)',
-                                    padding: 20,
-                                    transition: 'all 0.25s ease',
+                                    borderRadius: 'var(--radius-xl)',
+                                    padding: '24px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 20,
+                                    position: 'relative',
+                                    boxShadow: isSelected ? `0 20px 40px ${template.accentColor}20` : 'none',
+                                    transition: 'all 0.3s ease',
                                 }}
                             >
-                                <TemplateMiniPreview template={template} selected={isSelected} />
-
-                                <div style={{ marginTop: 16 }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                                        <h3 style={{ fontWeight: 700, fontSize: 16 }}>{template.name}</h3>
-                                        {isSelected && (
-                                            <div style={{
-                                                width: 24, height: 24, borderRadius: '50%',
-                                                background: template.accentColor,
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            }}>
-                                                <Check size={14} color="#fff" />
-                                            </div>
-                                        )}
+                                {isSelected && (
+                                    <div style={{
+                                        position: 'absolute', top: -12, right: 24,
+                                        background: template.accentColor, color: '#fff',
+                                        padding: '4px 12px', borderRadius: 20, fontSize: 11, fontWeight: 800,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)', zIndex: 10
+                                    }}>
+                                        SELECTED
                                     </div>
-                                    <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.6, marginBottom: 12 }}>
-                                        {template.description}
-                                    </p>
+                                )}
+
+                                <FullTemplatePreview templateId={template.id} accentColor={template.accentColor} />
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                    <div>
+                                        <h3 style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', marginBottom: 4 }}>{template.name}</h3>
+                                        <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.6 }}>
+                                            {template.description}
+                                        </p>
+                                    </div>
+
                                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                                         {template.tags.map((tag) => (
                                             <span key={tag} style={{
-                                                fontSize: 11, fontWeight: 600,
-                                                background: `${template.accentColor}18`,
-                                                color: template.accentColor,
-                                                border: `1px solid ${template.accentColor}30`,
-                                                padding: '2px 8px', borderRadius: 'var(--radius-full)',
-                                                letterSpacing: '0.3px',
+                                                fontSize: 10, fontWeight: 700,
+                                                background: 'var(--bg-surface)',
+                                                color: 'var(--text-secondary)',
+                                                border: '1px solid var(--border-subtle)',
+                                                padding: '3px 10px', borderRadius: 20,
                                             }}>{tag}</span>
                                         ))}
                                     </div>
+
+                                    <button
+                                        onClick={() => handleContinue(template.id, template.accentColor)}
+                                        style={{
+                                            marginTop: 8,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                            background: isSelected ? template.accentColor : 'var(--bg-surface)',
+                                            color: isSelected ? '#fff' : 'var(--text-primary)',
+                                            border: isSelected ? 'none' : '1px solid var(--border-default)',
+                                            padding: '12px', borderRadius: 12,
+                                            fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                        }}
+                                        onMouseEnter={e => {
+                                            if (!isSelected) {
+                                                e.currentTarget.style.background = 'var(--bg-hover)';
+                                                e.currentTarget.style.borderColor = template.accentColor;
+                                            }
+                                        }}
+                                        onMouseLeave={e => {
+                                            if (!isSelected) {
+                                                e.currentTarget.style.background = 'var(--bg-surface)';
+                                                e.currentTarget.style.borderColor = 'var(--border-default)';
+                                            }
+                                        }}
+                                    >
+                                        {isSelected ? 'Continue with this' : 'Use This Template'}
+                                        <ArrowRight size={16} />
+                                    </button>
                                 </div>
                             </motion.div>
                         );
                     })}
                 </div>
-
-                {/* Continue button */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    style={{ textAlign: 'center' }}
-                >
-                    <button
-                        onClick={handleContinue}
-                        style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 10,
-                            background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))',
-                            color: '#fff', border: 'none', cursor: 'pointer',
-                            padding: '16px 40px', borderRadius: 'var(--radius-full)',
-                            fontSize: 17, fontWeight: 700,
-                            boxShadow: '0 8px 28px rgba(99,102,241,0.4)',
-                            transition: 'all 0.25s ease',
-                            fontFamily: 'var(--font-sans)',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(99,102,241,0.55)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(99,102,241,0.4)'; }}
-                    >
-                        Use This Template <ArrowRight size={18} />
-                    </button>
-                    <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 16 }}>
-                        Selected: <strong style={{ color: 'var(--text-secondary)' }}>{TEMPLATES.find(t => t.id === selectedTemplate)?.name}</strong>
-                    </p>
-                </motion.div>
             </div>
         </div>
     );
