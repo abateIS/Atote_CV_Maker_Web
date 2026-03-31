@@ -115,27 +115,33 @@ function FullTemplatePreview({ templateId, accentColor }) {
     return (
         <div style={{
             width: '100%',
-            height: 320,
-            background: '#fff',
-            borderRadius: 12,
+            height: 340,
+            background: templateId === 'tech' ? '#0d1117' : '#f8fafc',
+            borderRadius: 16,
             overflow: 'hidden',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+            boxShadow: 'inset 0 0 20px rgba(0,0,0,0.05)',
             position: 'relative',
-            border: '1px solid var(--border-subtle)'
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '20px 0'
         }}>
             <div style={{
-                transform: 'scale(0.4)',
+                transform: 'scale(0.38)',
                 transformOrigin: 'top center',
-                width: 794, // Standard CV width
-                margin: '0 auto'
+                width: 794, // Standard A4 width in pixels at 96 DPI
+                flexShrink: 0,
+                boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+                background: '#fff'
             }}>
                 {renderTemplate()}
             </div>
-            {/* Gradient overlay to fade bottom */}
+            {/* Soft fade-out at bottom */}
             <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0, height: 60,
-                background: 'linear-gradient(to top, var(--bg-card), transparent)',
-                zIndex: 2
+                position: 'absolute', bottom: 0, left: 0, right: 0, height: 100,
+                background: 'linear-gradient(to top, var(--bg-card) 20%, transparent)',
+                zIndex: 2,
+                pointerEvents: 'none'
             }} />
         </div>
     );
