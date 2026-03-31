@@ -79,7 +79,9 @@ export default function ExperienceForm() {
                                     type="month"
                                     value={exp.startDate || ''}
                                     onChange={(e) => updateItem('experience', exp.id, { startDate: e.target.value })}
-                                    style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
+                                    onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+                                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                    style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}
                                 />
                             </div>
                             {!exp.current && (
@@ -89,7 +91,9 @@ export default function ExperienceForm() {
                                         type="month"
                                         value={exp.endDate || ''}
                                         onChange={(e) => updateItem('experience', exp.id, { endDate: e.target.value })}
-                                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
+                                        onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+                                        onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}
                                     />
                                 </div>
                             )}
