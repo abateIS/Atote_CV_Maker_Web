@@ -59,11 +59,18 @@ export default function Editor() {
             const { default: jsPDF } = await import('jspdf');
             const element = document.getElementById('cv-preview');
             if (!element) { setIsExporting(false); return; }
-            const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor });
+            const canvas = await html2canvas(element, {
+                scale: 3,
+                useCORS: true,
+                backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor,
+                logging: false,
+                width: 794, // 210mm at 96 DPI
+                height: 1123 // 297mm at 96 DPI
+            });
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const pdfW = pdf.internal.pageSize.getWidth();
-            const pdfH = (canvas.height * pdfW) / canvas.width;
+            const pdfW = 210;
+            const pdfH = 297;
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
             const name = `${cvData.personalInfo.firstName || 'CV'}_${cvData.personalInfo.lastName || ''}_CV.pdf`.replace(/\s+/g, '_');
             pdf.save(name);

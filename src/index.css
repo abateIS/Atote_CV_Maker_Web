@@ -348,6 +348,24 @@ select {
   outline: none;
 }
 
+/* Custom styles for date/month pickers to ensure icon visibility */
+input[type="month"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: var(--theme-icon-filter, invert(1));
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+[data-theme="light"] {
+  --theme-icon-filter: invert(0);
+}
+
+input[type="month"]::-webkit-calendar-picker-indicator:hover,
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
 input:focus,
 textarea:focus,
 select:focus {

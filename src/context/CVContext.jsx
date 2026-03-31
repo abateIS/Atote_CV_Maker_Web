@@ -30,6 +30,7 @@ export function CVProvider({ children }) {
   const [accentColor, setAccentColor] = useState('#6366f1');
   const [theme, setTheme] = useState('dark');
   const [techBgColor, setTechBgColor] = useState('#0d1117');
+  const [cvBgColor, setCvBgColor] = useState('#ffffff');
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -149,6 +150,8 @@ export function CVProvider({ children }) {
         toggleTheme,
         techBgColor,
         setTechBgColor,
+        cvBgColor,
+        setCvBgColor,
         updatePersonalInfo,
         updateSummary,
         addItem,
