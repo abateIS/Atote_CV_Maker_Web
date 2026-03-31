@@ -57,7 +57,9 @@ export default function CertificationsForm() {
                                         type="month"
                                         value={cert.date || ''}
                                         onChange={(e) => updateItem('certifications', cert.id, { date: e.target.value })}
-                                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none' }}
+                                        onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+                                        onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', outline: 'none', width: '100%', cursor: 'pointer' }}
                                     />
                                 </div>
                             </div>
