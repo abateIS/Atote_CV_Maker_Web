@@ -93,6 +93,12 @@ export default function PersonalInfoForm({ onNext }) {
                 <FormGroup><FormLabel>Website</FormLabel><input placeholder="alexjohnson.dev" {...field('website')} /></FormGroup>
             </FormRow>
 
+            <div style={{ marginTop: 16, padding: 12, background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: 8 }}>
+                <div style={{ fontSize: 11, color: 'var(--color-primary-light)', lineHeight: 1.7 }}>
+                    💡 <strong>Pro Tip:</strong> Use a professional email address and provide your LinkedIn profile to increase your chances of being noticed.
+                </div>
+            </div>
+
             <FormNav onNext={onNext} nextLabel="Next: Summary" />
         </div>
     );
