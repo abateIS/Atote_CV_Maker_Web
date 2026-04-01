@@ -50,39 +50,51 @@ export default function Editor() {
     const [activeSection, setActiveSection] = useState('personal');
     const [mobileView, setMobileView] = useState('editor'); // 'editor' | 'preview'
     const [isExporting, setIsExporting] = useState(false);
+    const [exportStatus, setExportStatus] = useState('');
     const previewRef = useRef(null);
 
     const handleExportPDF = async () => {
+        if (isExporting) return;
+
         setIsExporting(true);
+        setExportStatus('Preparing...');
+
         try {
-            const { default: html2canvas } = await import('html2canvas');
-            const { default: jsPDF } = await import('jspdf');
+            // Pre-load libraries
+            const [html2canvas, jsPDF] = await Promise.all([
+                import('html2canvas').then(m => m.default),
+                import('jspdf').then(m => m.default)
+            ]);
 
             const element = document.getElementById('cv-preview');
             if (!element) {
-                setIsExporting(false);
-                return;
+                throw new Error('Preview element not found');
             }
 
-            // For mobile: Ensure the element is not affected by parent transforms during capture
-            // and use a slightly lower scale to save memory while keeping high quality
+            setExportStatus('Capturing...');
+
+            // For mobile: use a lower scale to be safe with memory
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+
             const canvas = await html2canvas(element, {
-                scale: 2, // 2 is usually enough for high-quality PDF and safer for mobile memory
+                scale: isMobile ? 1.5 : 2,
                 useCORS: true,
                 backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor,
                 logging: false,
                 width: 794,
-                windowWidth: 794, // Force window width to A4 width for consistent rendering
+                windowWidth: 794,
                 onclone: (doc) => {
-                    // Optional: adjust cloned document if needed
                     const clonedElement = doc.getElementById('cv-preview');
                     if (clonedElement) {
                         clonedElement.style.transform = 'none';
+                        clonedElement.style.margin = '0';
                     }
                 }
             });
 
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            setExportStatus('Formatting...');
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
@@ -90,15 +102,13 @@ export default function Editor() {
                 compress: true
             });
 
-            const pdfW = 210;
-            const pdfH = 297;
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+            pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
 
             const name = `${cvData.personalInfo.firstName || 'CV'}_${cvData.personalInfo.lastName || ''}_CV.pdf`.replace(/\s+/g, '_');
 
-            // On mobile, pdf.save() can sometimes fail or be blocked. 
-            // This is a more robust way to trigger download.
-            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            setExportStatus('Downloading...');
+
+            if (isMobile) {
                 const blob = pdf.output('blob');
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
@@ -106,16 +116,23 @@ export default function Editor() {
                 link.download = name;
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
-                setTimeout(() => URL.revokeObjectURL(url), 100);
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 1000);
             } else {
                 pdf.save(name);
             }
+
+            setExportStatus('Done!');
+            setTimeout(() => setExportStatus(''), 3000);
         } catch (e) {
             console.error('Export error:', e);
-            alert('Export failed. Please try again or use a desktop browser.');
+            alert('Export failed. Please try on a desktop browser.');
+            setExportStatus('Error');
         } finally {
             setIsExporting(false);
+            if (exportStatus !== 'Done!') setExportStatus('');
         }
     };
 
@@ -200,13 +217,15 @@ export default function Editor() {
 
                         <button onClick={handleExportPDF} disabled={isExporting} style={{
                             display: 'flex', alignItems: 'center', gap: 6,
-                            background: 'var(--color-success)', color: '#fff', border: 'none', padding: '7px 14px',
+                            background: exportStatus === 'Error' ? 'var(--color-danger)' : exportStatus === 'Done!' ? 'var(--color-success)' : 'var(--color-success)',
+                            color: '#fff', border: 'none', padding: '7px 14px',
                             borderRadius: 'var(--radius-sm)', cursor: isExporting ? 'not-allowed' : 'pointer',
                             fontSize: 12, fontWeight: 700,
+                            transition: 'all 0.2s'
                         }}>
                             {isExporting ? <Loader size={12} className="spin" /> : <Download size={12} />}
-                            <span className="hide-mobile">{isExporting ? 'Exporting...' : 'Download PDF'}</span>
-                            <span className="show-mobile">PDF</span>
+                            <span className="hide-mobile">{exportStatus || 'Download PDF'}</span>
+                            <span className="show-mobile">{exportStatus || 'PDF'}</span>
                         </button>
                     </div>
                 </div>
