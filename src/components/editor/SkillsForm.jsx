@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
+import FormNav from './FormNav';
 
 function FormLabel({ children }) {
     return <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 5 }}>{children}</label>;
