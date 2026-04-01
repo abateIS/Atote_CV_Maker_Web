@@ -78,16 +78,36 @@ export default function Editor() {
         setIsExporting(false);
     };
 
+    const handleNext = () => {
+        const currentIndex = SECTIONS.findIndex(s => s.id === activeSection);
+        if (currentIndex < SECTIONS.length - 1) {
+            setActiveSection(SECTIONS[currentIndex + 1].id);
+            // Scroll to top of form
+            const formArea = document.querySelector('.form-area');
+            if (formArea) formArea.scrollTop = 0;
+        }
+    };
+
+    const handleBack = () => {
+        const currentIndex = SECTIONS.findIndex(s => s.id === activeSection);
+        if (currentIndex > 0) {
+            setActiveSection(SECTIONS[currentIndex - 1].id);
+            const formArea = document.querySelector('.form-area');
+            if (formArea) formArea.scrollTop = 0;
+        }
+    };
+
     const renderForm = () => {
+        const props = { onNext: handleNext, onBack: handleBack, isLast: activeSection === SECTIONS[SECTIONS.length - 1].id, onExport: handleExportPDF };
         switch (activeSection) {
-            case 'personal': return <PersonalInfoForm />;
-            case 'summary': return <SummaryForm />;
-            case 'experience': return <ExperienceForm />;
-            case 'education': return <EducationForm />;
-            case 'skills': return <SkillsForm />;
-            case 'languages': return <LanguagesForm />;
-            case 'certifications': return <CertificationsForm />;
-            case 'projects': return <ProjectsForm />;
+            case 'personal': return <PersonalInfoForm {...props} />;
+            case 'summary': return <SummaryForm {...props} />;
+            case 'experience': return <ExperienceForm {...props} />;
+            case 'education': return <EducationForm {...props} />;
+            case 'skills': return <SkillsForm {...props} />;
+            case 'languages': return <LanguagesForm {...props} />;
+            case 'certifications': return <CertificationsForm {...props} />;
+            case 'projects': return <ProjectsForm {...props} />;
             default: return null;
         }
     };
@@ -182,7 +202,7 @@ export default function Editor() {
                         </div>
 
                         {/* Form area */}
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+                        <div className="form-area" style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
                             <AnimatePresence mode="wait">
                                 <motion.div key={activeSection} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                                     {renderForm()}

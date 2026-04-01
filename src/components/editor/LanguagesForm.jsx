@@ -6,28 +6,23 @@ function FormLabel({ children }) {
     return <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 5 }}>{children}</label>;
 }
 
+import FormNav from './FormNav';
+
 const PROFICIENCY_LEVELS = ['Native', 'Fluent', 'Professional', 'Conversational', 'Basic'];
 
-export default function LanguagesForm() {
+export default function LanguagesForm({ onNext, onBack }) {
     const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => addItem('languages', { language: '', proficiency: 'Conversational' });
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>Languages</h3>
                 <button onClick={handleAdd} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', color: 'var(--color-primary-light)', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-sans)' }}>
                     <Plus size={13} /> Add Language
                 </button>
             </div>
-
-            {cvData.languages.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '32px 20px', color: 'var(--text-muted)', fontSize: 13, border: '2px dashed var(--border-subtle)', borderRadius: 10 }}>
-                    <div style={{ fontSize: 28, marginBottom: 8 }}>🌍</div>
-                    Click "Add Language" to add your language skills
-                </div>
-            )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {cvData.languages.map(lang => (
@@ -48,6 +43,8 @@ export default function LanguagesForm() {
                     </div>
                 ))}
             </div>
+
+            <FormNav onNext={onNext} onBack={onBack} nextLabel="Next: Awards" />
         </div>
     );
 }

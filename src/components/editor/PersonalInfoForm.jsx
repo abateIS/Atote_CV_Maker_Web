@@ -14,7 +14,9 @@ function FormRow({ children }) {
     return <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>{children}</div>;
 }
 
-export default function PersonalInfoForm() {
+import FormNav from './FormNav';
+
+export default function PersonalInfoForm({ onNext }) {
     const { cvData, updatePersonalInfo } = useCV();
     const p = cvData.personalInfo;
     const fileRef = useRef();
@@ -90,6 +92,8 @@ export default function PersonalInfoForm() {
                 <FormGroup><FormLabel>GitHub</FormLabel><input placeholder="github.com/alexjohnson" {...field('github')} /></FormGroup>
                 <FormGroup><FormLabel>Website</FormLabel><input placeholder="alexjohnson.dev" {...field('website')} /></FormGroup>
             </FormRow>
+
+            <FormNav onNext={onNext} nextLabel="Next: Summary" />
         </div>
     );
 }

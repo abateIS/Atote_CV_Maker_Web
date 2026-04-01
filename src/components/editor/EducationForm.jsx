@@ -2,8 +2,9 @@ import React from 'react';
 import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
 import MonthYearPicker from './MonthYearPicker';
+import FormNav from './FormNav';
 
-export default function EducationForm() {
+export default function EducationForm({ onNext, onBack }) {
     const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => {
@@ -96,6 +97,8 @@ export default function EducationForm() {
                     <Plus size={18} /> Add Education
                 </button>
             </div>
+
+            <FormNav onNext={onNext} onBack={onBack} nextLabel="Next: Skills" />
         </div>
     );
 }

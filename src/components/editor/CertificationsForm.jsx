@@ -3,7 +3,9 @@ import { useCV } from '../../context/CVContext';
 import { Plus, Trash2 } from 'lucide-react';
 import MonthYearPicker from './MonthYearPicker';
 
-export default function CertificationsForm() {
+import FormNav from './FormNav';
+
+export default function CertificationsForm({ onNext, onBack }) {
     const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => {
@@ -73,6 +75,8 @@ export default function CertificationsForm() {
                     <Plus size={18} /> Add Certification
                 </button>
             </div>
+
+            <FormNav onNext={onNext} onBack={onBack} nextLabel="Next: Projects" />
         </div>
     );
 }

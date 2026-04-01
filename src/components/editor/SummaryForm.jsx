@@ -1,7 +1,8 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
+import FormNav from './FormNav';
 
-export default function SummaryForm() {
+export default function SummaryForm({ onNext, onBack }) {
     const { cvData, updateSummary } = useCV();
 
     return (
@@ -31,6 +32,8 @@ export default function SummaryForm() {
                     <li>Keep it to 3–5 sentences max</li>
                 </ul>
             </div>
+
+            <FormNav onNext={onNext} onBack={onBack} nextLabel="Next: Work Experience" />
         </div>
     );
 }

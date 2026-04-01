@@ -6,26 +6,21 @@ function FormLabel({ children }) {
     return <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 5 }}>{children}</label>;
 }
 
-export default function ProjectsForm() {
+import FormNav from './FormNav';
+
+export default function ProjectsForm({ onNext, onBack, isLast, onExport }) {
     const { cvData, addItem, updateItem, removeItem } = useCV();
 
     const handleAdd = () => addItem('projects', { name: '', description: '', url: '', technologies: '' });
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>Projects</h3>
                 <button onClick={handleAdd} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', color: 'var(--color-primary-light)', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: 'var(--font-sans)' }}>
                     <Plus size={13} /> Add Project
                 </button>
             </div>
-
-            {cvData.projects.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '32px 20px', color: 'var(--text-muted)', fontSize: 13, border: '2px dashed var(--border-subtle)', borderRadius: 10 }}>
-                    <div style={{ fontSize: 28, marginBottom: 8 }}>🚀</div>
-                    Click "Add Project" to showcase your best work
-                </div>
-            )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {cvData.projects.map(proj => (
@@ -46,11 +41,7 @@ export default function ProjectsForm() {
                 ))}
             </div>
 
-            <div style={{ marginTop: 16, padding: 12, background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: 8 }}>
-                <div style={{ fontSize: 11, color: 'var(--color-primary-light)', lineHeight: 1.7 }}>
-                    💡 <strong>Tip:</strong> Include open-source work, hackathon projects, or significant personal projects. Mention GitHub stars or user numbers if available.
-                </div>
-            </div>
+            <FormNav onNext={onNext} onBack={onBack} isLast={isLast} onExport={onExport} />
         </div>
     );
 }
