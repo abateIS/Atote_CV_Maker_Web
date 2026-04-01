@@ -51,13 +51,21 @@ export default function Editor() {
     const [mobileView, setMobileView] = useState('editor'); // 'editor' | 'preview'
     const [isExporting, setIsExporting] = useState(false);
     const [exportStatus, setExportStatus] = useState('');
+    const [downloadUrl, setDownloadUrl] = useState(null);
     const previewRef = useRef(null);
 
     const handleExportPDF = async () => {
+        // If already ready, just open the existing URL
+        if (exportStatus === 'Ready!' && downloadUrl) {
+            window.open(downloadUrl, '_blank');
+            return;
+        }
+
         if (isExporting) return;
 
         setIsExporting(true);
         setExportStatus('Preparing...');
+        setDownloadUrl(null);
 
         try {
             const [html2canvas, jsPDF] = await Promise.all([
@@ -83,7 +91,6 @@ export default function Editor() {
                     if (clonedElement) {
                         clonedElement.style.transform = 'none';
                         clonedElement.style.margin = '0';
-                        // Strip heavy styles for mobile capture
                         const all = doc.querySelectorAll('*');
                         all.forEach(el => {
                             el.style.boxShadow = 'none';
@@ -95,9 +102,9 @@ export default function Editor() {
                 }
             });
 
-            // Timeout after 12 seconds for mobile safety
+            // Timeout after 15 seconds
             const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Capture timed out. Please try a simpler template or desktop.')), 12000)
+                setTimeout(() => reject(new Error('Capture timed out. Please try a simpler template.')), 15000)
             );
 
             const canvas = await Promise.race([capturePromise, timeoutPromise]);
@@ -114,33 +121,19 @@ export default function Editor() {
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
             const name = `${cvData.personalInfo.firstName || 'CV'}_CV.pdf`.replace(/\s+/g, '_');
 
-            setExportStatus('Downloading...');
+            const blob = pdf.output('blob');
+            const url = URL.createObjectURL(blob);
+            setDownloadUrl(url);
 
             if (isMobile) {
-                // For mobile: Use a blob + window.open as it's more reliable than link.click()
-                const blob = pdf.output('blob');
-                const url = URL.createObjectURL(blob);
-
-                // Attempt 1: New tab (most reliable for mobile viewers)
-                const newWindow = window.open(url, '_blank');
-
-                // Attempt 2: Direct link (fallback)
-                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = name;
-                    document.body.appendChild(link);
-                    link.click();
-                    setTimeout(() => document.body.removeChild(link), 1000);
-                }
-
-                setTimeout(() => URL.revokeObjectURL(url), 5000);
+                setExportStatus('Ready!');
+                // On mobile, we DON'T automatically open to avoid "white page" issues with blocked popups
+                // Instead, the user will click the button which now says "View PDF"
             } else {
+                setExportStatus('Downloading...');
                 pdf.save(name);
+                setTimeout(() => setExportStatus(''), 3000);
             }
-
-            setExportStatus('Ready!');
-            setTimeout(() => setExportStatus(''), 5000);
         } catch (e) {
             console.error('Export error:', e);
             alert(e.message || 'Export failed. Try a desktop browser.');
