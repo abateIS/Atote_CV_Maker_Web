@@ -57,25 +57,66 @@ export default function Editor() {
         try {
             const { default: html2canvas } = await import('html2canvas');
             const { default: jsPDF } = await import('jspdf');
+
             const element = document.getElementById('cv-preview');
-            if (!element) { setIsExporting(false); return; }
+            if (!element) {
+                setIsExporting(false);
+                return;
+            }
+
+            // For mobile: Ensure the element is not affected by parent transforms during capture
+            // and use a slightly lower scale to save memory while keeping high quality
             const canvas = await html2canvas(element, {
-                scale: 3,
+                scale: 2, // 2 is usually enough for high-quality PDF and safer for mobile memory
                 useCORS: true,
                 backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor,
                 logging: false,
-                width: 794, // 210mm at 96 DPI
-                height: 1123 // 297mm at 96 DPI
+                width: 794,
+                windowWidth: 794, // Force window width to A4 width for consistent rendering
+                onclone: (doc) => {
+                    // Optional: adjust cloned document if needed
+                    const clonedElement = doc.getElementById('cv-preview');
+                    if (clonedElement) {
+                        clonedElement.style.transform = 'none';
+                    }
+                }
             });
+
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                compress: true
+            });
+
             const pdfW = 210;
             const pdfH = 297;
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+
             const name = `${cvData.personalInfo.firstName || 'CV'}_${cvData.personalInfo.lastName || ''}_CV.pdf`.replace(/\s+/g, '_');
-            pdf.save(name);
-        } catch (e) { console.error(e); }
-        setIsExporting(false);
+
+            // On mobile, pdf.save() can sometimes fail or be blocked. 
+            // This is a more robust way to trigger download.
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                const blob = pdf.output('blob');
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            } else {
+                pdf.save(name);
+            }
+        } catch (e) {
+            console.error('Export error:', e);
+            alert('Export failed. Please try again or use a desktop browser.');
+        } finally {
+            setIsExporting(false);
+        }
     };
 
     const handleNext = () => {
@@ -136,27 +177,24 @@ export default function Editor() {
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                        {/* Background Control */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 15, borderLeft: '1px solid var(--border-subtle)' }}>
+                        {/* Background Color Picker */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingLeft: 15, borderLeft: '1px solid var(--border-subtle)' }}>
                             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>CV Background</span>
-                            <div style={{ display: 'flex', gap: 4 }}>
-                                {(selectedTemplate === 'tech' ? TECH_BG_OPTIONS : PRESET_BG_COLORS.slice(0, 5)).map(color => (
-                                    <button
-                                        key={color}
-                                        onClick={() => selectedTemplate === 'tech' ? setTechBgColor(color) : setCvBgColor(color)}
-                                        style={{
-                                            width: 18, height: 18, borderRadius: 4, background: color,
-                                            border: (selectedTemplate === 'tech' ? techBgColor : cvBgColor) === color ? '2px solid var(--color-primary)' : '1px solid var(--border-subtle)',
-                                            cursor: 'pointer'
-                                        }}
-                                    />
-                                ))}
+                            <div style={{ position: 'relative', width: 24, height: 24, borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border-default)', cursor: 'pointer' }}>
                                 <input
                                     type="color"
                                     value={selectedTemplate === 'tech' ? techBgColor : cvBgColor}
                                     onChange={(e) => selectedTemplate === 'tech' ? setTechBgColor(e.target.value) : setCvBgColor(e.target.value)}
-                                    style={{ width: 20, height: 20, padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
+                                    style={{
+                                        position: 'absolute', top: -5, left: -5, width: 40, height: 40,
+                                        padding: 0, border: 'none', background: 'none', cursor: 'pointer'
+                                    }}
                                 />
+                                <div style={{
+                                    position: 'absolute', inset: 0,
+                                    background: selectedTemplate === 'tech' ? techBgColor : cvBgColor,
+                                    pointerEvents: 'none'
+                                }} />
                             </div>
                         </div>
 
