@@ -60,24 +60,19 @@ export default function Editor() {
         setExportStatus('Preparing...');
 
         try {
-            // Pre-load libraries
             const [html2canvas, jsPDF] = await Promise.all([
                 import('html2canvas').then(m => m.default),
                 import('jspdf').then(m => m.default)
             ]);
 
             const element = document.getElementById('cv-preview');
-            if (!element) {
-                throw new Error('Preview element not found');
-            }
+            if (!element) throw new Error('Preview not found');
 
             setExportStatus('Capturing...');
-
-            // For mobile: use a lower scale to be safe with memory
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-            const canvas = await html2canvas(element, {
-                scale: isMobile ? 1.5 : 2,
+            const capturePromise = html2canvas(element, {
+                scale: isMobile ? 1.0 : 1.5,
                 useCORS: true,
                 backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor,
                 logging: false,
@@ -88,13 +83,27 @@ export default function Editor() {
                     if (clonedElement) {
                         clonedElement.style.transform = 'none';
                         clonedElement.style.margin = '0';
+                        // Strip heavy styles for mobile capture
+                        const all = doc.querySelectorAll('*');
+                        all.forEach(el => {
+                            el.style.boxShadow = 'none';
+                            el.style.backdropFilter = 'none';
+                            el.style.transition = 'none';
+                            el.style.animation = 'none';
+                        });
                     }
                 }
             });
 
-            setExportStatus('Formatting...');
+            // Timeout after 12 seconds for mobile safety
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Capture timed out. Please try a simpler template or desktop.')), 12000)
+            );
 
-            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+            const canvas = await Promise.race([capturePromise, timeoutPromise]);
+
+            setExportStatus('Formatting...');
+            const imgData = canvas.toDataURL('image/jpeg', 0.8);
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
@@ -103,8 +112,7 @@ export default function Editor() {
             });
 
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
-
-            const name = `${cvData.personalInfo.firstName || 'CV'}_${cvData.personalInfo.lastName || ''}_CV.pdf`.replace(/\s+/g, '_');
+            const name = `${cvData.personalInfo.firstName || 'CV'}_CV.pdf`.replace(/\s+/g, '_');
 
             setExportStatus('Downloading...');
 
@@ -119,7 +127,7 @@ export default function Editor() {
                 setTimeout(() => {
                     document.body.removeChild(link);
                     URL.revokeObjectURL(url);
-                }, 1000);
+                }, 2000);
             } else {
                 pdf.save(name);
             }
@@ -128,11 +136,11 @@ export default function Editor() {
             setTimeout(() => setExportStatus(''), 3000);
         } catch (e) {
             console.error('Export error:', e);
-            alert('Export failed. Please try on a desktop browser.');
+            alert(e.message || 'Export failed. Try a desktop browser.');
             setExportStatus('Error');
         } finally {
             setIsExporting(false);
-            if (exportStatus !== 'Done!') setExportStatus('');
+            setTimeout(() => setExportStatus(''), 3000);
         }
     };
 
