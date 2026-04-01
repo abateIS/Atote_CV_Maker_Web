@@ -117,30 +117,37 @@ export default function Editor() {
             setExportStatus('Downloading...');
 
             if (isMobile) {
+                // For mobile: Use a blob + window.open as it's more reliable than link.click()
                 const blob = pdf.output('blob');
                 const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = name;
-                document.body.appendChild(link);
-                link.click();
-                setTimeout(() => {
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                }, 2000);
+
+                // Attempt 1: New tab (most reliable for mobile viewers)
+                const newWindow = window.open(url, '_blank');
+
+                // Attempt 2: Direct link (fallback)
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = name;
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => document.body.removeChild(link), 1000);
+                }
+
+                setTimeout(() => URL.revokeObjectURL(url), 5000);
             } else {
                 pdf.save(name);
             }
 
-            setExportStatus('Done!');
-            setTimeout(() => setExportStatus(''), 3000);
+            setExportStatus('Ready!');
+            setTimeout(() => setExportStatus(''), 5000);
         } catch (e) {
             console.error('Export error:', e);
             alert(e.message || 'Export failed. Try a desktop browser.');
             setExportStatus('Error');
         } finally {
             setIsExporting(false);
-            setTimeout(() => setExportStatus(''), 3000);
+            if (exportStatus === 'Preparing...') setExportStatus('');
         }
     };
 
@@ -225,7 +232,7 @@ export default function Editor() {
 
                         <button onClick={handleExportPDF} disabled={isExporting} style={{
                             display: 'flex', alignItems: 'center', gap: 6,
-                            background: exportStatus === 'Error' ? 'var(--color-danger)' : exportStatus === 'Done!' ? 'var(--color-success)' : 'var(--color-success)',
+                            background: exportStatus === 'Error' ? 'var(--color-danger)' : (exportStatus === 'Done!' || exportStatus === 'Ready!') ? 'var(--color-success)' : 'var(--color-success)',
                             color: '#fff', border: 'none', padding: '7px 14px',
                             borderRadius: 'var(--radius-sm)', cursor: isExporting ? 'not-allowed' : 'pointer',
                             fontSize: 12, fontWeight: 700,
