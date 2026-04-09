@@ -90,6 +90,9 @@ export default function Editor() {
                 onclone: (doc) => {
                     const clonedElement = doc.getElementById('cv-preview');
                     if (clonedElement) {
+                        // Force width for consistent layout in the PDF
+                        clonedElement.style.width = '794px';
+                        clonedElement.style.maxWidth = '794px';
                         clonedElement.style.transform = 'none';
                         clonedElement.style.margin = '0';
                         clonedElement.style.padding = '0';

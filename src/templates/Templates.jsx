@@ -35,7 +35,7 @@ export function ModernTemplate({ data, accentColor = '#6366f1', cvBgColor = '#ff
     return (
         <div id="cv-preview" style={{
             display: 'flex', fontFamily: "'Inter', sans-serif", fontSize: 10, color: '#1e293b',
-            background: cvBgColor, minHeight: 842, maxWidth: 595,
+            background: cvBgColor, minHeight: 1123, width: 794,
             wordBreak: 'break-word', overflowWrap: 'break-word'
         }}>
             {/* Sidebar */}
@@ -194,7 +194,7 @@ export function ClassicTemplate({ data, accentColor = '#0ea5e9', cvBgColor = '#f
     return (
         <div id="cv-preview" style={{
             fontFamily: "'Georgia', serif", fontSize: 10, color: '#1a1a2e',
-            background: cvBgColor, padding: '36px 40px', minHeight: 842, maxWidth: 595,
+            background: cvBgColor, padding: '36px 40px', minHeight: 1123, width: 794,
             wordBreak: 'break-word', overflowWrap: 'break-word'
         }}>
             {/* Header */}
@@ -321,7 +321,7 @@ export function CreativeTemplate({ data, accentColor = '#f59e0b', cvBgColor = '#
     return (
         <div id="cv-preview" style={{
             fontFamily: "'Inter', sans-serif", fontSize: 10, background: cvBgColor,
-            minHeight: 842, maxWidth: 595,
+            minHeight: 1123, width: 794,
             wordBreak: 'break-word', overflowWrap: 'break-word'
         }}>
             {/* Header */}
@@ -460,7 +460,7 @@ export function ExecutiveTemplate({ data, accentColor = '#1e40af', cvBgColor = '
     return (
         <div id="cv-preview" style={{
             fontFamily: "'Inter', sans-serif", fontSize: 10, background: cvBgColor,
-            minHeight: 842, maxWidth: 595,
+            minHeight: 1123, width: 794,
             wordBreak: 'break-word', overflowWrap: 'break-word'
         }}>
             {/* Dark header */}
@@ -579,7 +579,7 @@ export function TechTemplate({ data, accentColor = '#10b981', techBgColor = '#0d
     return (
         <div id="cv-preview" style={{
             fontFamily: "'JetBrains Mono', monospace", fontSize: 9.5, background: techBgColor,
-            color: '#e2e8f0', minHeight: 842, maxWidth: 595,
+            color: '#e2e8f0', minHeight: 1123, width: 794,
             wordBreak: 'break-word', overflowWrap: 'break-word'
         }}>
             {/* Terminal header */}
