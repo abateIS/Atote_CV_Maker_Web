@@ -80,8 +80,9 @@ export default function Editor() {
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
             const capturePromise = html2canvas(element, {
-                scale: isMobile ? 1.0 : 1.5,
+                scale: 2, // Restore high resolution for sharp text/images
                 useCORS: true,
+                allowTaint: true,
                 backgroundColor: selectedTemplate === 'tech' ? techBgColor : cvBgColor,
                 logging: false,
                 width: 794,
@@ -91,10 +92,11 @@ export default function Editor() {
                     if (clonedElement) {
                         clonedElement.style.transform = 'none';
                         clonedElement.style.margin = '0';
+                        clonedElement.style.padding = '0';
+
+                        // Only stop animations, but keep all other visual styles
                         const all = doc.querySelectorAll('*');
                         all.forEach(el => {
-                            el.style.boxShadow = 'none';
-                            el.style.backdropFilter = 'none';
                             el.style.transition = 'none';
                             el.style.animation = 'none';
                         });
